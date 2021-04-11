@@ -1,0 +1,43 @@
+/*
+ * @NOTE: Prepend a `~` to css file paths that are in your node_modules
+ *        See https://github.com/webpack-contrib/sass-loader#imports
+ */
+@import '~antd/dist/antd.css';
+
+body {
+  position: relative;
+  color: white;
+  height: 100vh;
+  /*background: linear-gradient(
+    200.96deg,
+    #fedc2a -29.09%,
+    #dd5789 51.77%,
+    #7a2c9e 129.35%
+  );*/
+  font-family: sans-serif;
+  overflow-y: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+h1 {align-content: center}
+
+.operate_button {
+  margin: 3vh 0;
+}
+
+.work-list {
+  height: 60vh;
+  overflow: scroll;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+.Hello {
+  justify-content: space-between;
+  align-items: center;
+  height: 100vh;
+  padding: 10vh;
+}
