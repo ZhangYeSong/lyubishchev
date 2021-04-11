@@ -39,5 +39,6 @@ button:hover {
   justify-content: space-between;
   align-items: center;
   height: 100vh;
+  width: 80vh;
   padding: 10vh;
 }
