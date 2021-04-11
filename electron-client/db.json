@@ -1,0 +1,54 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "lowdb is awesome"
+    }
+  ],
+  "user": {},
+  "count": 0,
+  "works": [
+    {
+      "userId": 0,
+      "insertTime": 1618142736165,
+      "content": "工作",
+      "startTime": 1618142628470,
+      "endTime": 1618142736165
+    },
+    {
+      "userId": 0,
+      "insertTime": 1618142841741,
+      "content": "工作",
+      "startTime": 1618142839555,
+      "endTime": 1618142841741
+    },
+    {
+      "userId": 0,
+      "insertTime": 1618143594417,
+      "content": "工作",
+      "startTime": 1618143594034,
+      "endTime": 1618143594418
+    },
+    {
+      "userId": 0,
+      "insertTime": 1618143597281,
+      "content": "工作",
+      "startTime": 1618143596671,
+      "endTime": 1618143597281
+    },
+    {
+      "userId": 0,
+      "insertTime": 1618143599014,
+      "content": "工作",
+      "startTime": 1618143598612,
+      "endTime": 1618143599014
+    },
+    {
+      "userId": 0,
+      "insertTime": 1618144391740,
+      "content": "dedwd",
+      "startTime": 1618144391088,
+      "endTime": 1618144391740
+    }
+  ]
+}

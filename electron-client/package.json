@@ -247,11 +247,13 @@
     "yarn-deduplicate": "^3.1.0"
   },
   "dependencies": {
+    "@types/lowdb": "^1.0.9",
     "antd": "^4.15.1",
     "electron-debug": "^3.1.0",
     "electron-log": "^4.2.4",
     "electron-updater": "^4.3.4",
     "history": "^5.0.0",
+    "lowdb": "^1.0.0",
     "moment": "^2.29.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",

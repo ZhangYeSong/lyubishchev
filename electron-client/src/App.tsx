@@ -5,8 +5,16 @@ import './App.global.css';
 import { Input, Button, List } from 'antd';
 import {Work} from './Work';
 import  moment from 'moment';
+import low from 'lowdb';
+import FileSync from 'lowdb/adapters/FileSync';
 
 moment.locale('zh-cn');
+
+const adapter = new FileSync('db.json'); // 申明一个适配器
+const db = low(adapter);
+
+db.defaults({works: []})
+  .write();
 
 interface MainPagerState {
   workTitle: string,
@@ -21,7 +29,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
     this.state = {
       workTitle: "",
       working: false,
-      works: [],
+      works: db.get("works").filter({userId: 0}).value(),
       startTime: moment().valueOf()
     };
   }
@@ -49,6 +57,9 @@ class MainPager extends React.Component<Object, MainPagerState> {
         endTime: moment().valueOf()
       };
       works.push(work);
+      db.get('works')
+        .push(work)
+        .write();
     } else {
       this.setState({startTime: moment().valueOf()})
     }
@@ -61,7 +72,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
       + " - "
       + moment(work.endTime).format("LT")
       + " "
-      + moment(work.endTime).diff(moment(work.startTime), "minutes")
+      + (moment(work.endTime).diff(moment(work.startTime), "minutes") + 1)
       + "分钟";
   }
 

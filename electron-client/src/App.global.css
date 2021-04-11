@@ -20,7 +20,10 @@ body {
   justify-content: center;
 }
 
-h1 {align-content: center}
+h1 {text-align: center}
+Input {
+  text-align: center;
+}
 
 .operate_button {
   margin: 3vh 0;
@@ -36,7 +39,7 @@ button:hover {
 }
 
 .Hello {
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   height: 100vh;
   width: 80vh;
