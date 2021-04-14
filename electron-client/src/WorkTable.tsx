@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { Table, Input, Popconfirm, Form } from 'antd';
 import { FormInstance } from 'antd/lib/form';
+import { Work } from './Work';
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
 
@@ -86,23 +87,16 @@ const EditableCell: React.FC<EditableCellProps> =
   return <td {...restProps}>{childNode}</td>;
 };
 
-type EditableTableProps = Parameters<typeof Table>[0];
+type TableTypes = Parameters<typeof Table>[0];
 
-interface DataType {
-  key: React.Key;
-  content: string;
-  startEndTime: string;
-  cost: string;
-}
-
-interface EditableTableState {
-  dataSource: DataType[];
+interface EditableTableProps {
+  dataSource: Work[];
   count: number;
 }
 
-type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
+type ColumnTypes = Exclude<TableTypes['columns'], undefined>;
 
-export class EditableTable extends React.Component<EditableTableProps, EditableTableState> {
+export class EditableTable extends React.Component<EditableTableProps, Object> {
   columns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[];
 
   constructor(props: EditableTableProps) {
@@ -130,55 +124,23 @@ export class EditableTable extends React.Component<EditableTableProps, EditableT
         title: '操作',
         dataIndex: 'operation',
         align: 'center',
-        render: (_, record: { key: React.Key }) =>
-          this.state.dataSource.length >= 1 ? (
-            <Popconfirm title="确定删除?" onConfirm={() => this.handleDelete(record.key)}>
+        render: (_, record: { insertTime: number }) =>
+          this.props.dataSource.length >= 1 ? (
+            <Popconfirm title="确定删除?" onConfirm={() => this.handleDelete(record.insertTime)}>
               <a>删除</a>
             </Popconfirm>) : null,
       },
     ];
-
-    this.state = {
-      dataSource: [
-        {
-          key: 0,
-          content: "晨会",
-          startEndTime: "9：30-10：00",
-          cost: "10分钟"
-        },
-        {
-          key: 1,
-          content: "晨会",
-          startEndTime: "9：30-10：00",
-          cost: "10分钟"
-        },
-      ],
-      count: 2,
-    };
   }
 
-  handleDelete = (key: React.Key) => {
-    const dataSource = [...this.state.dataSource];
-    this.setState({ dataSource: dataSource.filter(item => item.key !== key) });
+  handleDelete = (insertTime: number) => {
+    const dataSource = [...this.props.dataSource];
+    this.setState({ dataSource: dataSource.filter(item => item.insertTime !== insertTime) });
   };
 
-  handleAdd = () => {
-    const { count, dataSource } = this.state;
-    const newData: DataType = {
-      key: 0,
-      content: "晨会",
-      startEndTime: '9：00-10：00',
-      cost: "60分钟",
-    };
-    this.setState({
-      dataSource: [...dataSource, newData],
-      count: count + 1,
-    });
-  };
-
-  handleSave = (row: DataType) => {
-    const newData = [...this.state.dataSource];
-    const index = newData.findIndex(item => row.key === item.key);
+  handleSave = (row: Work) => {
+    const newData = [...this.props.dataSource];
+    const index = newData.findIndex(item => row.insertTime === item.insertTime);
     const item = newData[index];
     newData.splice(index, 1, {
       ...item,
@@ -188,7 +150,7 @@ export class EditableTable extends React.Component<EditableTableProps, EditableT
   };
 
   render() {
-    const { dataSource } = this.state;
+    const dataSource = this.props.dataSource;
     const components = {
       body: {
         row: EditableRow,
@@ -201,7 +163,7 @@ export class EditableTable extends React.Component<EditableTableProps, EditableT
       }
       return {
         ...col,
-        onCell: (record: DataType) => ({
+        onCell: (record: Work) => ({
           record,
           editable: col.editable,
           dataIndex: col.dataIndex,
@@ -213,12 +175,14 @@ export class EditableTable extends React.Component<EditableTableProps, EditableT
     return (
       <div>
         <Table
+          className="work-list"
           components={components}
           rowClassName={() => 'editable-row'}
           bordered
           dataSource={dataSource}
           columns={columns as ColumnTypes}
           pagination={ false }
+          rowKey={(record: Work) => record.insertTime}
         />
       </div>
     );

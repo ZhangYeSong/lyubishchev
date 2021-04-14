@@ -2,7 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.global.css';
-import { Input, Button, List } from 'antd';
+import { Input, Button } from 'antd';
 import {Work} from './Work';
 import  moment from 'moment';
 import low from 'lowdb';
@@ -50,31 +50,16 @@ class MainPager extends React.Component<Object, MainPagerState> {
       if (title.trim().length <= 0) {
         title = '工作';
       }
-      let work: Work = {
-        userId: 0,
-        insertTime: moment().valueOf(),
-        content: title,
-        startTime: this.state.startTime,
-        endTime: moment().valueOf()
-      };
+      let work: Work = new Work(0, moment().valueOf(), title, this.state.startTime, moment().valueOf());
       works.push(work);
+      let newWorks = works.slice();
       db.get('works')
         .push(work)
         .write();
+      this.setState({works: newWorks});
     } else {
       this.setState({startTime: moment().valueOf()})
     }
-  }
-
-  private getWorkTimeString = (work: Work) => {
-    return work.content
-      + " "
-      + moment(work.startTime).format("LT")
-      + " - "
-      + moment(work.endTime).format("LT")
-      + " "
-      + (moment(work.endTime).diff(moment(work.startTime), "minutes") + 1)
-      + "分钟";
   }
 
   private onInputChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
@@ -98,7 +83,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
           size="large" block>
           {this.getButtonText()}
         </Button>
-        <EditableTable />
+        <EditableTable dataSource={this.state.works} count={this.state.works.length}/>
       </div>
     );
   }
