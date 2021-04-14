@@ -7,6 +7,7 @@ import {Work} from './Work';
 import  moment from 'moment';
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
+import { EditableTable } from './WorkTable';
 
 moment.locale('zh-cn');
 
@@ -97,13 +98,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
           size="large" block>
           {this.getButtonText()}
         </Button>
-        <List
-          className="work-list"
-          size="large"
-          bordered
-          dataSource={this.state.works}
-          renderItem={item => <List.Item>{this.getWorkTimeString(item)}</List.Item>}
-        />
+        <EditableTable />
       </div>
     );
   }
