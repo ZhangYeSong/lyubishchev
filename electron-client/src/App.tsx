@@ -62,6 +62,35 @@ class MainPager extends React.Component<Object, MainPagerState> {
     }
   }
 
+  private handleDelete = (record: Work) => {
+    let index = this.state.works.indexOf(record);
+    if (index > -1) {
+      db.get('works').remove({insertTime: record.insertTime}).write();
+      this.state.works.splice(index, 1);
+      let newWorks = this.state.works.slice();
+      this.setState({works: newWorks});
+    }
+  }
+
+  private handleUpdate = (record: Work) => {
+    const newWorks = [...this.state.works];
+    const index = newWorks.findIndex(item => record.insertTime === item.insertTime);
+    if (index < 0) {
+      return;
+    }
+    db.get('works')
+      .find({ insertTime: record.insertTime })
+      .assign({ content: record.content})
+      .write();
+
+    const item = newWorks[index];
+    newWorks.splice(index, 1, {
+      ...item,
+      ...record,
+    });
+    this.setState({works: newWorks});
+  }
+
   private onInputChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     this.setState({
       workTitle: e.target.value
@@ -83,7 +112,11 @@ class MainPager extends React.Component<Object, MainPagerState> {
           size="large" block>
           {this.getButtonText()}
         </Button>
-        <EditableTable dataSource={this.state.works} count={this.state.works.length}/>
+        <EditableTable handleDelete={this.handleDelete}
+                       handleUpdate={this.handleUpdate}
+                       dataSource={this.state.works}
+                       count={this.state.works.length}
+        />
       </div>
     );
   }

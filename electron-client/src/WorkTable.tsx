@@ -91,6 +91,8 @@ type TableTypes = Parameters<typeof Table>[0];
 
 interface EditableTableProps {
   dataSource: Work[];
+  handleDelete: (record: Work) => void;
+  handleUpdate: (record: Work) => void;
   count: number;
 }
 
@@ -124,29 +126,17 @@ export class EditableTable extends React.Component<EditableTableProps, Object> {
         title: '操作',
         dataIndex: 'operation',
         align: 'center',
-        render: (_, record: { insertTime: number }) =>
+        render: (_, record: Work) =>
           this.props.dataSource.length >= 1 ? (
-            <Popconfirm title="确定删除?" onConfirm={() => this.handleDelete(record.insertTime)}>
+            <Popconfirm title="确定删除?" onConfirm={() => this.props.handleDelete(record)}>
               <a>删除</a>
             </Popconfirm>) : null,
       },
     ];
   }
 
-  handleDelete = (insertTime: number) => {
-    const dataSource = [...this.props.dataSource];
-    this.setState({ dataSource: dataSource.filter(item => item.insertTime !== insertTime) });
-  };
-
   handleSave = (row: Work) => {
-    const newData = [...this.props.dataSource];
-    const index = newData.findIndex(item => row.insertTime === item.insertTime);
-    const item = newData[index];
-    newData.splice(index, 1, {
-      ...item,
-      ...row,
-    });
-    this.setState({ dataSource: newData });
+    this.props.handleUpdate(row);
   };
 
   render() {

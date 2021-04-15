@@ -10,53 +10,8 @@
   "works": [
     {
       "userId": 0,
-      "insertTime": 1618419752218,
-      "content": "工作",
-      "startTime": 1618419750746,
-      "endTime": 1618419752219,
-      "startEndTime": "01:02 - 01:02",
-      "cost": "1分钟"
-    },
-    {
-      "userId": 0,
-      "insertTime": 1618419761803,
-      "content": "工作",
-      "startTime": 1618419757622,
-      "endTime": 1618419761803,
-      "startEndTime": "01:02 - 01:02",
-      "cost": "1分钟"
-    },
-    {
-      "userId": 0,
-      "insertTime": 1618419835427,
-      "content": "工作",
-      "startTime": 1618419832954,
-      "endTime": 1618419835427,
-      "startEndTime": "01:03 - 01:03",
-      "cost": "1分钟"
-    },
-    {
-      "userId": 0,
-      "insertTime": 1618420074260,
-      "content": "工作",
-      "startTime": 1618420072517,
-      "endTime": 1618420074260,
-      "startEndTime": "01:07 - 01:07",
-      "cost": "1分钟"
-    },
-    {
-      "userId": 0,
-      "insertTime": 1618420387216,
-      "content": "工作",
-      "startTime": 1618420386296,
-      "endTime": 1618420387216,
-      "startEndTime": "01:13 - 01:13",
-      "cost": "1分钟"
-    },
-    {
-      "userId": 0,
       "insertTime": 1618420390899,
-      "content": "工作",
+      "content": "工作jjj",
       "startTime": 1618420389913,
       "endTime": 1618420390899,
       "startEndTime": "01:13 - 01:13",
@@ -69,6 +24,15 @@
       "startTime": 1618420392478,
       "endTime": 1618420394820,
       "startEndTime": "01:13 - 01:13",
+      "cost": "1分钟"
+    },
+    {
+      "userId": 0,
+      "insertTime": 1618500510660,
+      "content": "工作",
+      "startTime": 1618500508441,
+      "endTime": 1618500510660,
+      "startEndTime": "23:28 - 23:28",
       "cost": "1分钟"
     }
   ]
