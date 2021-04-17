@@ -2,7 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.global.css';
-import { Input, Button } from 'antd';
+import { Input, Button, Modal } from 'antd';
 import {Work} from './Work';
 import  moment from 'moment';
 import low from 'lowdb';
@@ -21,7 +21,8 @@ interface MainPagerState {
   workTitle: string,
   working: boolean,
   works: Work[],
-  startTime: number
+  startTime: number,
+  isTimeModalVisible: boolean
 }
 
 class MainPager extends React.Component<Object, MainPagerState> {
@@ -31,7 +32,8 @@ class MainPager extends React.Component<Object, MainPagerState> {
       workTitle: "",
       working: false,
       works: db.get("works").filter({userId: 0}).value(),
-      startTime: moment().valueOf()
+      startTime: moment().valueOf(),
+      isTimeModalVisible: false
     };
   }
 
@@ -39,6 +41,18 @@ class MainPager extends React.Component<Object, MainPagerState> {
     let working = this.state.working;
     return working? "停止":"开始";
   }
+
+  private setTimeModalVisible = (visible: boolean) => {
+    this.setState({isTimeModalVisible: visible});
+  }
+
+  private handleEditTime = (work: Work) => {
+    this.showTimeModal();
+  }
+
+  private showTimeModal = () => {this.setTimeModalVisible(true)}
+  private handleTimeModalOk = () => {this.setTimeModalVisible(false)}
+  private handleTimeModalCancel = () => {this.setTimeModalVisible(false)}
 
   private handleClick = () => {
     this.setState({
@@ -112,8 +126,15 @@ class MainPager extends React.Component<Object, MainPagerState> {
           size="large" block>
           {this.getButtonText()}
         </Button>
+        <Modal title="Basic Modal" visible={this.state.isTimeModalVisible} 
+          onOk={this.handleTimeModalOk} onCancel={this.handleTimeModalCancel}>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </Modal>
         <EditableTable handleDelete={this.handleDelete}
                        handleUpdate={this.handleUpdate}
+                       handleEditTime={this.handleEditTime}
                        dataSource={this.state.works}
                        count={this.state.works.length}
         />

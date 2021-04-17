@@ -93,6 +93,7 @@ interface EditableTableProps {
   dataSource: Work[];
   handleDelete: (record: Work) => void;
   handleUpdate: (record: Work) => void;
+  handleEditTime: (record: Work) => void;
   count: number;
 }
 
@@ -115,7 +116,8 @@ export class EditableTable extends React.Component<EditableTableProps, Object> {
       {
         title: '起止时间',
         dataIndex: 'startEndTime',
-        align: 'center'
+        align: 'center',
+        render: (text: string, record: Work) => <a onClick={this.props.handleEditTime}>{text}</a>
       },
       {
         title: '耗时',
@@ -133,6 +135,10 @@ export class EditableTable extends React.Component<EditableTableProps, Object> {
             </Popconfirm>) : null,
       },
     ];
+  }
+
+  handleEditTime = (record: Work) => {
+    this.props.handleEditTime(record);
   }
 
   handleSave = (row: Work) => {
