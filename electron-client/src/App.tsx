@@ -2,13 +2,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.global.css';
-import { ConfigProvider, Input, Button } from 'antd';
+import { ConfigProvider, Input, Button, DatePicker } from 'antd';
 import {Work } from './Work';
-import  moment from 'moment';
+import  moment, { Moment } from 'moment';
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
 import { EditableTable } from './WorkTable';
 import zhCN from 'antd/lib/locale/zh_CN';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 
 moment.locale('zh-cn');
 
@@ -41,7 +42,6 @@ class MainPager extends React.Component<Object, MainPagerState> {
     return working? "停止":"开始";
   }
 
-
   private handleEditTime = (work?: Work) => {
     const newWorks = [...this.state.works];
     if(work == null) {
@@ -64,6 +64,10 @@ class MainPager extends React.Component<Object, MainPagerState> {
       ...work,
     });
     this.setState({works: newWorks});
+  }
+
+  private onDateChange = (date: Moment) => {
+
   }
 
   private handleClick = () => {
@@ -127,9 +131,14 @@ class MainPager extends React.Component<Object, MainPagerState> {
     return (
       <div className="Hello">
         <h1>柳比歇夫计时器</h1>
+        <div>
+          <LeftOutlined style={{color: 'black'}}/>
+          <span><DatePicker onChange={this.onDateChange} value={moment()}/></span>
+          <RightOutlined style={{color: 'black'}}/>
+        </div>
         <Input onChange={this.onInputChange}
                value={this.state.workTitle}
-               size="large" placeholder="工作"/><br/>
+               size="large" placeholder="工作"/>
         <Button
           className="operate_button"
           onClick={this.handleClick}

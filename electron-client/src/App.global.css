@@ -7,37 +7,41 @@
 body {
   position: relative;
   color: white;
-  width: 100wh;
+  width: 100vw;
   height: 100vh;
   font-family: sans-serif;
   overflow-y: hidden;
-  display: flex;
-  justify-content: center;
 }
 
-h1 {text-align: center}
+.ant-picker {
+  margin: 20px;
+}
+
 Input {
   text-align: center;
 }
 
-.operate_button {
-  margin: 3vh 0;
-}
-
 .work-list {
+  width: 90vw;
   height: 60vh;
 }
 
-button:hover {
+.operate_button {
+  margin: 20px;
+}
+
+.operate_button:hover {
   transform: scale(1.05);
 }
 
 .Hello {
-  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   align-items: center;
-  height: 100wh;
-  width: 100vh;
-  padding: 10vh;
+  height: 100vh;
+  width: 100vw;
+  padding: 20px;
 }
 
 .editable-cell {
@@ -45,7 +49,7 @@ button:hover {
 }
 
 .editable-cell-value-wrap {
-  padding: 5px 12px;
+  padding: 5px, 5px;
   cursor: pointer;
 }
 
