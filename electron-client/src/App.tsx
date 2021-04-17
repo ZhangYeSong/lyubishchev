@@ -2,12 +2,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.global.css';
-import { Input, Button, Modal } from 'antd';
-import {Work} from './Work';
+import { ConfigProvider, Input, Button } from 'antd';
+import {Work } from './Work';
 import  moment from 'moment';
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
 import { EditableTable } from './WorkTable';
+import zhCN from 'antd/lib/locale/zh_CN';
 
 moment.locale('zh-cn');
 
@@ -21,8 +22,7 @@ interface MainPagerState {
   workTitle: string,
   working: boolean,
   works: Work[],
-  startTime: number,
-  isTimeModalVisible: boolean
+  startTime: number
 }
 
 class MainPager extends React.Component<Object, MainPagerState> {
@@ -32,8 +32,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
       workTitle: "",
       working: false,
       works: db.get("works").filter({userId: 0}).value(),
-      startTime: moment().valueOf(),
-      isTimeModalVisible: false
+      startTime: moment().valueOf()
     };
   }
 
@@ -42,17 +41,30 @@ class MainPager extends React.Component<Object, MainPagerState> {
     return working? "停止":"开始";
   }
 
-  private setTimeModalVisible = (visible: boolean) => {
-    this.setState({isTimeModalVisible: visible});
-  }
 
-  private handleEditTime = (work: Work) => {
-    this.showTimeModal();
-  }
+  private handleEditTime = (work?: Work) => {
+    const newWorks = [...this.state.works];
+    if(work == null) {
+      return;
+    }
+    const index = newWorks.findIndex(item => work.insertTime === item.insertTime);
+    if (index < 0) {
+      return;
+    }
+    db.get('works')
+      .find({ insertTime: work.insertTime })
+      .assign({ startTime: work.startTime, endTime: work.endTime,
+        startEndTime: work.startEndTime, cost: work.cost
+      })
+      .write();
+    const item = newWorks[index];
 
-  private showTimeModal = () => {this.setTimeModalVisible(true)}
-  private handleTimeModalOk = () => {this.setTimeModalVisible(false)}
-  private handleTimeModalCancel = () => {this.setTimeModalVisible(false)}
+    newWorks.splice(index, 1, {
+      ...item,
+      ...work,
+    });
+    this.setState({works: newWorks});
+  }
 
   private handleClick = () => {
     this.setState({
@@ -126,12 +138,6 @@ class MainPager extends React.Component<Object, MainPagerState> {
           size="large" block>
           {this.getButtonText()}
         </Button>
-        <Modal title="Basic Modal" visible={this.state.isTimeModalVisible} 
-          onOk={this.handleTimeModalOk} onCancel={this.handleTimeModalCancel}>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-        </Modal>
         <EditableTable handleDelete={this.handleDelete}
                        handleUpdate={this.handleUpdate}
                        handleEditTime={this.handleEditTime}
@@ -147,7 +153,9 @@ export default function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/" component={MainPager} />
+        <ConfigProvider locale={zhCN}>
+          <Route path="/" component={MainPager} />
+        </ConfigProvider>
       </Switch>
     </Router>
   );

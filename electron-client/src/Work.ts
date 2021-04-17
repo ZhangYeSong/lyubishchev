@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-export class Work {
+export class  Work {
   userId: number;
   insertTime: number;
   content: string;
@@ -15,17 +15,14 @@ export class Work {
     this.content = content;
     this.startTime = startTime;
     this.endTime = endTime;
-    this.startEndTime = this.getStartEndTimeString();
-    this.cost = this.getCostTimeString();
+    updateTimeString(this);
   }
+}
 
-  public getStartEndTimeString() {
-    return moment(this.startTime).format("LT")
-      + " - "
-      + moment(this.endTime).format("LT");
-  }
-
-  public getCostTimeString() {
-    return(moment(this.endTime).diff(moment(this.startTime), "minutes") + 1) + "分钟";
-  }
+export function updateTimeString(work: Work):void {
+  work.startEndTime = 
+    moment(work.startTime).format("LT")
+    + " - "
+    + moment(work.endTime).format("LT");
+  work.cost = (moment(work.endTime).diff(moment(work.startTime), "minutes") + 1) + "分钟";
 }

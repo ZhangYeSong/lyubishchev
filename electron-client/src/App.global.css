@@ -7,13 +7,8 @@
 body {
   position: relative;
   color: white;
+  width: 100wh;
   height: 100vh;
-  /*background: linear-gradient(
-    200.96deg,
-    #fedc2a -29.09%,
-    #dd5789 51.77%,
-    #7a2c9e 129.35%
-  );*/
   font-family: sans-serif;
   overflow-y: hidden;
   display: flex;
@@ -31,7 +26,6 @@ Input {
 
 .work-list {
   height: 60vh;
-  overflow: scroll;
 }
 
 button:hover {
@@ -41,7 +35,7 @@ button:hover {
 .Hello {
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: 100wh;
   width: 100vh;
   padding: 10vh;
 }

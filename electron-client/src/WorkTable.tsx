@@ -1,7 +1,8 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { Table, Input, Popconfirm, Form } from 'antd';
+import { Table, Input, Popconfirm, Form, Modal, TimePicker } from 'antd';
 import { FormInstance } from 'antd/lib/form';
-import { Work } from './Work';
+import { Work, updateTimeString } from './Work';
+import  moment, { Moment } from 'moment';
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
 
@@ -93,23 +94,29 @@ interface EditableTableProps {
   dataSource: Work[];
   handleDelete: (record: Work) => void;
   handleUpdate: (record: Work) => void;
-  handleEditTime: (record: Work) => void;
+  handleEditTime: (record?: Work) => void;
   count: number;
+}
+
+interface EditableTableStates {
+  isTimeModalVisible: boolean;
+  curWork?: Work;
 }
 
 type ColumnTypes = Exclude<TableTypes['columns'], undefined>;
 
-export class EditableTable extends React.Component<EditableTableProps, Object> {
+export class EditableTable extends React.Component<EditableTableProps, EditableTableStates> {
   columns: (ColumnTypes[number] & { editable?: boolean; dataIndex: string })[];
 
   constructor(props: EditableTableProps) {
     super(props);
+    this.state = {isTimeModalVisible: false};
 
     this.columns = [
       {
         title: '事件',
         dataIndex: 'content',
-        width: '40%',
+        width: '30%',
         editable: true,
         align: 'center'
       },
@@ -117,7 +124,8 @@ export class EditableTable extends React.Component<EditableTableProps, Object> {
         title: '起止时间',
         dataIndex: 'startEndTime',
         align: 'center',
-        render: (text: string, record: Work) => <a onClick={this.props.handleEditTime}>{text}</a>
+        width: '30%',
+        render: (text: string) => <a>{text}</a>
       },
       {
         title: '耗时',
@@ -137,13 +145,31 @@ export class EditableTable extends React.Component<EditableTableProps, Object> {
     ];
   }
 
-  handleEditTime = (record: Work) => {
-    this.props.handleEditTime(record);
+
+  private setTimeModalVisible = (visible: boolean) => {
+    this.setState({isTimeModalVisible: visible});
   }
+
+  private showTimeModal = () => {this.setTimeModalVisible(true)}
+  private handleTimeModalOk = () => {
+    this.setTimeModalVisible(false);
+    this.props.handleEditTime(this.state.curWork);
+  }
+  private handleTimeModalCancel = () => {this.setTimeModalVisible(false)}
 
   handleSave = (row: Work) => {
     this.props.handleUpdate(row);
   };
+
+  OnModalTimeChange = (time:[]) => {
+    let work = this.state.curWork;
+    if(work == null) {
+      return;
+    }
+    work.startTime = time[0].valueOf();
+    work.endTime = time[1].valueOf();
+    updateTimeString(work);
+  }
 
   render() {
     const dataSource = this.props.dataSource;
@@ -155,7 +181,22 @@ export class EditableTable extends React.Component<EditableTableProps, Object> {
     };
     const columns = this.columns.map(col => {
       if (!col.editable) {
-        return col;
+        if(col.title == '起止时间') {
+          return {
+            ...col,
+            onCell: (record: Work) => {
+              return {
+                onClick: () => {
+                  this.showTimeModal();
+                  this.setState({curWork: record});
+                  this.props.handleEditTime(record);
+                }
+              }
+            }
+          }
+        } else {
+          return col;
+        }
       }
       return {
         ...col,
@@ -179,10 +220,20 @@ export class EditableTable extends React.Component<EditableTableProps, Object> {
           columns={columns as ColumnTypes}
           pagination={ false }
           rowKey={(record: Work) => record.insertTime}
+          scroll={{y: "60vh"}}
         />
+        <Modal title="修改时间" visible={this.state.isTimeModalVisible} 
+          onOk={this.handleTimeModalOk} onCancel={this.handleTimeModalCancel}>
+          <TimePicker.RangePicker 
+            format={format} 
+            onChange={this.OnModalTimeChange}
+            value={[moment(this.state.curWork?.startTime), moment(this.state.curWork?.endTime)]}/>
+        </Modal>
       </div>
     );
   }
 }
+
+const format = 'HH:mm';
 
 
