@@ -2,14 +2,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.global.css';
-import { ConfigProvider, Input, Button, DatePicker } from 'antd';
-import {Work } from './Work';
+import { ConfigProvider, Input, Button } from 'antd';
+import { Work } from './Work';
 import  moment, { Moment } from 'moment';
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
 import { EditableTable } from './WorkTable';
+import { MyDatePicker } from './MyDatePicker';
 import zhCN from 'antd/lib/locale/zh_CN';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 
 moment.locale('zh-cn');
 
@@ -23,7 +23,8 @@ interface MainPagerState {
   workTitle: string,
   working: boolean,
   works: Work[],
-  startTime: number
+  startTime: number,
+  date: Moment
 }
 
 class MainPager extends React.Component<Object, MainPagerState> {
@@ -33,7 +34,8 @@ class MainPager extends React.Component<Object, MainPagerState> {
       workTitle: "",
       working: false,
       works: db.get("works").filter({userId: 0}).value(),
-      startTime: moment().valueOf()
+      startTime: moment().valueOf(),
+      date: moment()
     };
   }
 
@@ -66,8 +68,8 @@ class MainPager extends React.Component<Object, MainPagerState> {
     this.setState({works: newWorks});
   }
 
-  private onDateChange = (date: Moment) => {
-
+  private handleDateChange = (date: Moment) => {
+    this.setState({date: moment(date)});
   }
 
   private handleClick = () => {
@@ -131,11 +133,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
     return (
       <div className="Hello">
         <h1>柳比歇夫计时器</h1>
-        <div>
-          <LeftOutlined style={{color: 'black'}}/>
-          <span><DatePicker onChange={this.onDateChange} value={moment()}/></span>
-          <RightOutlined style={{color: 'black'}}/>
-        </div>
+        <MyDatePicker date={this.state.date} handleDateChange={this.handleDateChange}/>
         <Input onChange={this.onInputChange}
                value={this.state.workTitle}
                size="large" placeholder="工作"/>
