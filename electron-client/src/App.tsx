@@ -4,20 +4,15 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.global.css';
 import { ConfigProvider, Input, Button } from 'antd';
 import { Work } from './Work';
+import { getUserWorks, updateWorkTime, insertWork, removeWork, updateWorkContent } from './LowDBHelper';
 import  moment, { Moment } from 'moment';
-import low from 'lowdb';
-import FileSync from 'lowdb/adapters/FileSync';
 import { EditableTable } from './WorkTable';
 import { MyDatePicker } from './MyDatePicker';
 import zhCN from 'antd/lib/locale/zh_CN';
 
 moment.locale('zh-cn');
 
-const adapter = new FileSync('db.json'); // 申明一个适配器
-const db = low(adapter);
 
-db.defaults({works: []})
-  .write();
 
 interface MainPagerState {
   workTitle: string,
@@ -33,7 +28,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
     this.state = {
       workTitle: "",
       working: false,
-      works: db.get("works").filter({userId: 0}).value(),
+      works: getUserWorks(0, moment()),
       startTime: moment().valueOf(),
       date: moment()
     };
@@ -53,12 +48,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
     if (index < 0) {
       return;
     }
-    db.get('works')
-      .find({ insertTime: work.insertTime })
-      .assign({ startTime: work.startTime, endTime: work.endTime,
-        startEndTime: work.startEndTime, cost: work.cost
-      })
-      .write();
+    updateWorkTime(work);
     const item = newWorks[index];
 
     newWorks.splice(index, 1, {
@@ -85,9 +75,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
       let work: Work = new Work(0, moment().valueOf(), title, this.state.startTime, moment().valueOf());
       works.push(work);
       let newWorks = works.slice();
-      db.get('works')
-        .push(work)
-        .write();
+      insertWork(work);
       this.setState({works: newWorks});
     } else {
       this.setState({startTime: moment().valueOf()})
@@ -97,7 +85,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
   private handleDelete = (record: Work) => {
     let index = this.state.works.indexOf(record);
     if (index > -1) {
-      db.get('works').remove({insertTime: record.insertTime}).write();
+      removeWork(record);
       this.state.works.splice(index, 1);
       let newWorks = this.state.works.slice();
       this.setState({works: newWorks});
@@ -110,10 +98,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
     if (index < 0) {
       return;
     }
-    db.get('works')
-      .find({ insertTime: record.insertTime })
-      .assign({ content: record.content})
-      .write();
+    updateWorkContent(record);
 
     const item = newWorks[index];
     newWorks.splice(index, 1, {
