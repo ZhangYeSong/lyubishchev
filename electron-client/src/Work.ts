@@ -7,7 +7,8 @@ export class  Work {
   startTime: number;
   endTime: number;
   startEndTime: string;
-  cost: string
+  cost: string;
+  delete: boolean;
 
   constructor(userId: number, insertTime: number, content: string, startTime: number, endTime: number) {
     this.userId = userId;
@@ -15,6 +16,7 @@ export class  Work {
     this.content = content;
     this.startTime = startTime;
     this.endTime = endTime;
+    this.delete = false;
     updateTimeString(this);
   }
 }

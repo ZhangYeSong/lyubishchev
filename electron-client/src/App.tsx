@@ -4,15 +4,13 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.global.css';
 import { ConfigProvider, Input, Button } from 'antd';
 import { Work } from './Work';
-import { getUserWorks, updateWorkTime, insertWork, removeWork, updateWorkContent } from './LowDBHelper';
+import { LowDBHelper } from './LowDBHelper';
 import  moment, { Moment } from 'moment';
 import { EditableTable } from './WorkTable';
 import { MyDatePicker } from './MyDatePicker';
 import zhCN from 'antd/lib/locale/zh_CN';
 
 moment.locale('zh-cn');
-
-
 
 interface MainPagerState {
   workTitle: string,
@@ -25,11 +23,13 @@ interface MainPagerState {
 class MainPager extends React.Component<Object, MainPagerState> {
   constructor(props: Object) {
     super(props);
+    let startWorkTime = LowDBHelper.getStartWorkTime();
+    let working = moment(startWorkTime).isSame(moment(), 'days');
     this.state = {
       workTitle: "",
-      working: false,
-      works: getUserWorks(0, moment()),
-      startTime: moment().valueOf(),
+      working: working,
+      works: LowDBHelper.getUserWorks(0, moment()),
+      startTime: startWorkTime,
       date: moment()
     };
   }
@@ -48,7 +48,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
     if (index < 0) {
       return;
     }
-    updateWorkTime(work);
+    LowDBHelper.updateWork(work);
     const item = newWorks[index];
 
     newWorks.splice(index, 1, {
@@ -59,7 +59,10 @@ class MainPager extends React.Component<Object, MainPagerState> {
   }
 
   private handleDateChange = (date: Moment) => {
-    this.setState({date: moment(date)});
+    this.setState({
+      date: moment(date),
+      works: LowDBHelper.getUserWorks(0, date)
+    });
   }
 
   private handleClick = () => {
@@ -75,17 +78,19 @@ class MainPager extends React.Component<Object, MainPagerState> {
       let work: Work = new Work(0, moment().valueOf(), title, this.state.startTime, moment().valueOf());
       works.push(work);
       let newWorks = works.slice();
-      insertWork(work);
+      LowDBHelper.insertWork(work);
       this.setState({works: newWorks});
+      LowDBHelper.setStartWorkTime(-1);
     } else {
-      this.setState({startTime: moment().valueOf()})
+      this.setState({startTime: moment().valueOf()});
+      LowDBHelper.setStartWorkTime(moment().valueOf());
     }
   }
 
   private handleDelete = (record: Work) => {
     let index = this.state.works.indexOf(record);
     if (index > -1) {
-      removeWork(record);
+      LowDBHelper.removeWork(record);
       this.state.works.splice(index, 1);
       let newWorks = this.state.works.slice();
       this.setState({works: newWorks});
@@ -98,7 +103,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
     if (index < 0) {
       return;
     }
-    updateWorkContent(record);
+    LowDBHelper.updateWork(record);
 
     const item = newWorks[index];
     newWorks.splice(index, 1, {
