@@ -96,6 +96,7 @@ interface EditableTableProps {
   handleUpdate: (record: Work) => void;
   handleEditTime: (record?: Work) => void;
   count: number;
+  date: Moment;
 }
 
 interface EditableTableStates {
@@ -161,14 +162,23 @@ export class EditableTable extends React.Component<EditableTableProps, EditableT
     this.props.handleUpdate(row);
   };
 
-  OnModalTimeChange = (time:[]) => {
+  OnModalTimeChange = (time:Moment[]) => {
     let work = this.state.curWork;
     if(work == null) {
       return;
     }
-    work.startTime = time[0].valueOf();
-    work.endTime = time[1].valueOf();
-    updateTimeString(work);
+    let start = time[0];
+    let end = time[1];
+    start.set('year', this.props.date.get('year'));
+    start.set('month', this.props.date.get('month'));
+    start.set('date', this.props.date.get('date'));
+    end.set('year', this.props.date.get('year'));
+    end.set('month', this.props.date.get('month'));
+    end.set('date', this.props.date.get('date'));
+    let newWork = new Work(0, work.insertTime, work.content,
+      start.valueOf(), end.valueOf());
+    updateTimeString(newWork);
+    this.setState({curWork: newWork});
   }
 
   render() {
@@ -215,7 +225,6 @@ export class EditableTable extends React.Component<EditableTableProps, EditableT
           className="work-list"
           components={components}
           rowClassName={() => 'editable-row'}
-          bordered
           dataSource={dataSource}
           columns={columns as ColumnTypes}
           pagination={ false }

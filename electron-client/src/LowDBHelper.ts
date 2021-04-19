@@ -6,7 +6,7 @@ import { Work } from './Work';
 const adapter = new FileSync('db.json'); // 申明一个适配器
 const db = low(adapter);
 
-db.defaults({works: [], startWorkTime: -1})
+db.defaults({works: [], deletes: [], startWorkTime: -1})
   .write();
 
 export class LowDBHelper {
@@ -19,9 +19,9 @@ export class LowDBHelper {
   }
 
   static getUserWorks(userid: number, date: Moment): Work[] {
-    return db.get("works").filter({function(work:Work) {
-      return work.userId == userid && work.delete == false && moment(work.endTime).isSame(date, 'days');
-    }}).value();
+    return db.get("works").filter(function(work:Work) {
+      return work.userId == userid && moment(work.endTime).isSame(date, 'days');
+    }).value();
   }
 
   static insertWork(work:Work): void {
@@ -32,16 +32,17 @@ export class LowDBHelper {
 
   static removeWork(work:Work): void {
     db.get('works')
-      .find({insertTime: work.insertTime})
-      .assign({delete: true})
+      .remove({insertTime: work.insertTime})
       .write();
+
+    db.get('deletes').push(work.insertTime).write();;
   }
   
   static updateWork(work: Work): void {
     db.get('works')
-      .find({insertTime: work.insertTime})
-      .assign({delete: true})
+      .remove({insertTime: work.insertTime})
       .write();
+    db.get('deletes').push(work.insertTime).write();;
     work.insertTime = moment().valueOf();
     db.get('works')
           .push(work)

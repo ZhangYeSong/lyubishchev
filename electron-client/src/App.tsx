@@ -35,6 +35,9 @@ class MainPager extends React.Component<Object, MainPagerState> {
   }
 
   private getButtonText = () => {
+    if(!this.state.date.isSame(moment(), 'days')) {
+      return "添加事件";
+    }
     let working = this.state.working;
     return working? "停止":"开始";
   }
@@ -44,6 +47,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
     if(work == null) {
       return;
     }
+
     const index = newWorks.findIndex(item => work.insertTime === item.insertTime);
     if (index < 0) {
       return;
@@ -66,6 +70,24 @@ class MainPager extends React.Component<Object, MainPagerState> {
   }
 
   private handleClick = () => {
+    if(!this.state.date.isSame(moment(), 'days')) {
+      let works = this.state.works;
+      let title = this.state.workTitle;
+      if (title.trim().length <= 0) {
+        title = '工作';
+      }
+      let m = moment();
+      m.set('year', this.state.date.get('year'));
+      m.set('month', this.state.date.get('month'));
+      m.set('date', this.state.date.get('date'));
+      let work: Work = new Work(0, m.valueOf(), title, m.valueOf(), m.valueOf());
+      works.push(work);
+      let newWorks = works.slice();
+      LowDBHelper.insertWork(work);
+      this.setState({works: newWorks});
+      LowDBHelper.setStartWorkTime(-1);
+      return;
+    }
     this.setState({
       working: !this.state.working
     });
@@ -140,6 +162,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
                        handleEditTime={this.handleEditTime}
                        dataSource={this.state.works}
                        count={this.state.works.length}
+                       date={this.state.date}
         />
       </div>
     );
