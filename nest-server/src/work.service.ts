@@ -1,6 +1,7 @@
 import { Model } from 'mongoose';
 import { Injectable, Inject } from '@nestjs/common';
 import { Work } from './work';
+import { CreateWorkDto } from './create-work.dto';
 
 @Injectable()
 export class WorkService {
@@ -9,8 +10,8 @@ export class WorkService {
     private workModel: Model<Work>,
   ) {}
 
-  async create(work: Work): Promise<Work> {
-    const createdCat = new this.workModel(work);
+  async create(workDto: CreateWorkDto) {
+    const createdCat = new this.workModel(workDto);
     return createdCat.save();
   }
 
