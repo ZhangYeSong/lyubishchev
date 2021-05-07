@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import { Injectable, Inject } from '@nestjs/common';
 import { Work } from './work';
-import { CreateWorkDto } from './create-work.dto';
+import { CreateWorkDto, SyncWorksDto } from './work.dto';
 
 @Injectable()
 export class WorkService {
@@ -11,8 +11,22 @@ export class WorkService {
   ) {}
 
   async create(workDto: CreateWorkDto) {
-    const createdCat = new this.workModel(workDto);
-    return createdCat.save();
+    const createWork = new this.workModel(workDto);
+    return createWork.save();
+  }
+
+  async syncWorks(syncDto: SyncWorksDto) {
+    //1.删除用户上报的已删除数据
+    await this.workModel.deleteMany({userId: syncDto.userId})
+      .where('insertTime').in(syncDto.deletes).exec();
+
+    //3.添加客户端数据
+    for (let dto of syncDto.works) {
+      await this.create(dto);
+    }
+
+    //3.查询用户在云端的数据
+    return await this.workModel.find({userId: syncDto.userId}).exec();
   }
 
   async findAll(): Promise<Work[]> {

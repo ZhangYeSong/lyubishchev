@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { WorkService } from './work.service';
 import { Work } from './Work'
-import { CreateWorkDto } from './create-work.dto';
+import { CreateWorkDto } from './work.dto';
 
 @Controller('work')
 export class WorkController {
@@ -17,6 +17,9 @@ export class WorkController {
     await this.workService.create(workDto);
     return 'add success!'
   }
+
+  @Post()
+  async syncWorks(@Body() workDtos: CreateWorkDto[], )
 
   @Get('all')
   async getAllWorks(): Promise<Work[]> {
