@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { WorkService } from './work.service';
-import { Work } from './Work'
+import { Work } from './work'
 import { CreateWorkDto, SyncWorksDto } from './work.dto';
 
 @Controller('work')

@@ -72,7 +72,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
 
   private handleSyncClick = () => {
     const outerThis = this;
-    axios.post("http://localhost:3000/work/sync", 
+    axios.post("http://zhangyesong.com:3000/work/sync", 
       {userId: 0, works: LowDBHelper.getUserAllWorks(0), deletes: LowDBHelper.getUserDeletes()})
       .then(function (response) {
         console.log(response);
