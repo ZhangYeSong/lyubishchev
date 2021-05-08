@@ -24,6 +24,21 @@ export class LowDBHelper {
     }).value();
   }
 
+  static getUserAllWorks(userid: number): Work[] {
+    return db.get("works").filter(function(work:Work) {
+      return work.userId == userid;
+    }).value();
+  }
+
+  static getUserDeletes(): number[] {
+    return db.get("deletes");
+  }
+
+  static syncWorks(works: Work[]) {
+    db.get("deletes").remove().write();
+    db.set("works", works).write();
+  }
+
   static insertWork(work:Work): void {
     db.get('works')
           .push(work)

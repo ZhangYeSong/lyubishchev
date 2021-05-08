@@ -11,8 +11,8 @@ export class WorkService {
   ) {}
 
   async create(workDto: CreateWorkDto) {
-    const createWork = new this.workModel(workDto);
-    return createWork.save();
+    return await this.workModel.findOneAndUpdate({insertTime: workDto.insertTime}, 
+      workDto, {upsert: true, new: true});
   }
 
   async syncWorks(syncDto: SyncWorksDto) {

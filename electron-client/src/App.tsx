@@ -2,13 +2,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.global.css';
-import { ConfigProvider, Input, Button } from 'antd';
+import { ConfigProvider, Input, Button, message } from 'antd';
 import { Work } from './Work';
 import { LowDBHelper } from './LowDBHelper';
 import  moment, { Moment } from 'moment';
 import { EditableTable } from './WorkTable';
 import { MyDatePicker } from './MyDatePicker';
 import zhCN from 'antd/lib/locale/zh_CN';
+import axios from 'axios';
 
 moment.locale('zh-cn');
 
@@ -69,7 +70,24 @@ class MainPager extends React.Component<Object, MainPagerState> {
     });
   }
 
-  private handleClick = () => {
+  private handleSyncClick = () => {
+    const outerThis = this;
+    axios.post("http://localhost:3000/work/sync", 
+      {userId: 0, works: LowDBHelper.getUserAllWorks(0), deletes: LowDBHelper.getUserDeletes()})
+      .then(function (response) {
+        console.log(response);
+        LowDBHelper.syncWorks(response.data);
+        outerThis.handleDateChange(outerThis.state.date);
+        message.info('同步成功！');
+      })
+      .catch(function (error) {
+        console.log(error);
+        message.info('同步失败！');
+      });
+      
+  }
+
+  private handleOperateClick = () => {
     if(!this.state.date.isSame(moment(), 'days')) {
       let works = this.state.works;
       let title = this.state.workTitle;
@@ -144,14 +162,18 @@ class MainPager extends React.Component<Object, MainPagerState> {
   render() {
     return (
       <div className="Hello">
-        <h1>柳比歇夫计时器</h1>
+        <div className="head_div">
+          <Button>目录</Button>
+          <h1>柳比歇夫计时器</h1>
+          <Button onClick={this.handleSyncClick}>同步</Button>
+        </div>
         <MyDatePicker date={this.state.date} handleDateChange={this.handleDateChange}/>
         <Input onChange={this.onInputChange}
                value={this.state.workTitle}
                size="large" placeholder="工作"/>
         <Button
           className="operate_button"
-          onClick={this.handleClick}
+          onClick={this.handleOperateClick}
           type="primary"
           shape="round"
           size="large" block>
