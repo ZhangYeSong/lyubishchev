@@ -12,6 +12,12 @@ import zhCN from 'antd/lib/locale/zh_CN';
 import axios from 'axios';
 
 moment.locale('zh-cn');
+if (process.env.NODE_ENV == "development") {
+  axios.defaults.baseURL = 'http://localhost:3000';
+} else {
+  axios.defaults.baseURL = 'http://zhangyesong.com:3000';
+}
+
 
 interface MainPagerState {
   workTitle: string,
@@ -72,7 +78,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
 
   private handleSyncClick = () => {
     const outerThis = this;
-    axios.post("http://zhangyesong.com:3000/work/sync", 
+    axios.post("/work/sync", 
       {userId: 0, works: LowDBHelper.getUserAllWorks(0), deletes: LowDBHelper.getUserDeletes()})
       .then(function (response) {
         console.log(response);
