@@ -18,6 +18,14 @@ export class LowDBHelper {
     return db.set("startWorkTime", time).write();
   }
 
+  static getCurrentContent():string {
+    return db.get("currentContent").value();
+  }
+
+  static setCurrentContent(content: string):void {
+    return db.set("currentContent", content).write();
+  }
+
   static getUserWorks(userid: number, date: Moment): Work[] {
     return db.get("works").filter(function(work:Work) {
       return work.userId == userid && moment(work.endTime).isSame(date, 'days');

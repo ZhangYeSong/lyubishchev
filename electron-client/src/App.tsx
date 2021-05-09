@@ -33,7 +33,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
     let startWorkTime = LowDBHelper.getStartWorkTime();
     let working = moment(startWorkTime).isSame(moment(), 'days');
     this.state = {
-      workTitle: "",
+      workTitle: LowDBHelper.getCurrentContent(),
       working: working,
       works: LowDBHelper.getUserWorks(0, moment()),
       startTime: startWorkTime,
@@ -127,8 +127,10 @@ class MainPager extends React.Component<Object, MainPagerState> {
       LowDBHelper.insertWork(work);
       this.setState({works: newWorks});
       LowDBHelper.setStartWorkTime(-1);
+      LowDBHelper.setCurrentContent("");
     } else {
       this.setState({startTime: moment().valueOf()});
+      LowDBHelper.setCurrentContent(this.state.workTitle);
       LowDBHelper.setStartWorkTime(moment().valueOf());
     }
   }
@@ -180,7 +182,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
         <Button
           className="operate_button"
           onClick={this.handleOperateClick}
-          type="primary"
+          type="primary" danger={this.state.working}
           shape="round"
           size="large" block>
           {this.getButtonText()}

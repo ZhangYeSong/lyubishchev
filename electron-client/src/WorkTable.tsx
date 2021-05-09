@@ -117,7 +117,7 @@ export class EditableTable extends React.Component<EditableTableProps, EditableT
       {
         title: '事件',
         dataIndex: 'content',
-        width: '30%',
+        width: '40%',
         editable: true,
         align: 'center'
       },
