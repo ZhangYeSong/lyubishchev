@@ -12,6 +12,7 @@ import zhCN from 'antd/lib/locale/zh_CN';
 import axios from 'axios';
 
 moment.locale('zh-cn');
+let currentDay = moment();
 if (process.env.NODE_ENV == "development") {
   axios.defaults.baseURL = 'http://localhost:3000';
 } else {
@@ -24,7 +25,8 @@ interface MainPagerState {
   working: boolean,
   works: Work[],
   startTime: number,
-  date: Moment
+  date: Moment,
+  spendTime: number
 }
 
 class MainPager extends React.Component<Object, MainPagerState> {
@@ -37,8 +39,17 @@ class MainPager extends React.Component<Object, MainPagerState> {
       working: working,
       works: LowDBHelper.getUserWorks(0, moment()),
       startTime: startWorkTime,
-      date: moment()
+      date: moment(),
+      spendTime: working?moment().valueOf() - startWorkTime:0
     };
+    setInterval(() => {
+      this.setState({spendTime:moment().valueOf() - this.state.startTime});
+      //发现到了新的一天，强制刷新页面
+      if(!currentDay.isSame(moment(), 'day')) {
+        currentDay = moment();
+        this.forceUpdate();
+      }
+    }, 60000);
   }
 
   private getButtonText = () => {
@@ -46,7 +57,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
       return "添加事件";
     }
     let working = this.state.working;
-    return working? "停止":"开始";
+    return working? "停  止 已耗时"+moment.duration(this.state.spendTime).minutes()+"分钟":"开始";
   }
 
   private handleEditTime = (work?: Work) => {
@@ -125,7 +136,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
       works.push(work);
       let newWorks = works.slice();
       LowDBHelper.insertWork(work);
-      this.setState({works: newWorks});
+      this.setState({works: newWorks, spendTime: 0});
       LowDBHelper.setStartWorkTime(-1);
       LowDBHelper.setCurrentContent("");
     } else {
@@ -178,6 +189,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
         <MyDatePicker date={this.state.date} handleDateChange={this.handleDateChange}/>
         <Input onChange={this.onInputChange}
                value={this.state.workTitle}
+               disabled={this.state.working}
                size="large" placeholder="工作"/>
         <Button
           className="operate_button"
