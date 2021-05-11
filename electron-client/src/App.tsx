@@ -178,12 +178,20 @@ class MainPager extends React.Component<Object, MainPagerState> {
     });
   }
 
+  //今日已工作xx小时
+  private getTotalTime = () => {
+    let works = this.state.works;
+    let totalTime: number = 0;
+    works.forEach((work:Work) => totalTime+=work.endTime-work.startTime);
+    return moment.duration(totalTime).as('hours').toFixed(1);
+  }
+
   render() {
     return (
       <div className="Hello">
         <div className="head_div">
           <Button>目录</Button>
-          <h1>柳比歇夫计时器</h1>
+          <h2>柳比歇夫计时器</h2>
           <Button onClick={this.handleSyncClick}>同步</Button>
         </div>
         <MyDatePicker date={this.state.date} handleDateChange={this.handleDateChange}/>
@@ -199,6 +207,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
           size="large" block>
           {this.getButtonText()}
         </Button>
+        <div className="totalTime">今天已工作{this.getTotalTime()}小时</div>
         <EditableTable handleDelete={this.handleDelete}
                        handleUpdate={this.handleUpdate}
                        handleEditTime={this.handleEditTime}

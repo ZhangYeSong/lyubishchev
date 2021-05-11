@@ -14,7 +14,7 @@ body {
 }
 
 .ant-picker {
-  margin: 20px;
+  margin: 10px 20px;
 }
 
 Input {
@@ -23,15 +23,20 @@ Input {
 
 .work-list {
   width: 90vw;
-  height: 60vh;
+  height: 100vh;
 }
 
 .operate_button {
-  margin: 20px;
+  margin: 10px 20px;
 }
 
 Button:hover {
   transform: scale(1.05);
+}
+
+.totalTime {
+  color: black;
+  margin-bottom: 10px;
 }
 
 .Hello {
@@ -76,7 +81,7 @@ Button:hover {
   justify-content: space-between;
   align-items: center;
   width: 100vw;
-  padding: 8px;
+  padding: 0px 20px;
 }
 
-h1 {margin: 0px; padding: 0px;}
+h2 {margin: 0px; padding: 0px; font-weight: bold;}
