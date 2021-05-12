@@ -2,12 +2,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.global.css';
-import { ConfigProvider, Input, Button, message } from 'antd';
+import { ConfigProvider,Drawer, Input, Button, message } from 'antd';
 import { Work } from './Work';
 import { LowDBHelper } from './LowDBHelper';
 import  moment, { Moment } from 'moment';
 import { EditableTable } from './WorkTable';
 import { MyDatePicker } from './MyDatePicker';
+import { MenuOutlined } from '@ant-design/icons';
 import zhCN from 'antd/lib/locale/zh_CN';
 import axios from 'axios';
 
@@ -26,7 +27,8 @@ interface MainPagerState {
   works: Work[],
   startTime: number,
   date: Moment,
-  spendTime: number
+  spendTime: number,
+  drawerVisible: boolean
 }
 
 class MainPager extends React.Component<Object, MainPagerState> {
@@ -40,7 +42,8 @@ class MainPager extends React.Component<Object, MainPagerState> {
       works: LowDBHelper.getUserWorks(0, moment()),
       startTime: startWorkTime,
       date: moment(),
-      spendTime: working?moment().valueOf() - startWorkTime:0
+      spendTime: working?moment().valueOf() - startWorkTime:0,
+      drawerVisible: false
     };
     setInterval(() => {
       this.setState({spendTime:moment().valueOf() - this.state.startTime});
@@ -50,6 +53,14 @@ class MainPager extends React.Component<Object, MainPagerState> {
         this.forceUpdate();
       }
     }, 60000);
+  }
+
+  private openDrawer = () => {
+    this.setState({drawerVisible: true});
+  }
+
+  private closeDrawer = () => {
+    this.setState({drawerVisible: false});
   }
 
   private getButtonText = () => {
@@ -190,15 +201,15 @@ class MainPager extends React.Component<Object, MainPagerState> {
     return (
       <div className="Hello">
         <div className="head_div">
-          <Button>目录</Button>
+          <MenuOutlined style={{color: 'black', fontSize: "20px"}} onClick={this.openDrawer}/>
           <h2>柳比歇夫计时器</h2>
-          <Button onClick={this.handleSyncClick}>同步</Button>
+          <Button type="primary" onClick={this.handleSyncClick}>同步</Button>
         </div>
         <MyDatePicker date={this.state.date} handleDateChange={this.handleDateChange}/>
         <Input onChange={this.onInputChange}
-               value={this.state.workTitle}
-               disabled={this.state.working}
-               size="large" placeholder="工作"/>
+              value={this.state.workTitle}
+              disabled={this.state.working}
+              size="large" placeholder="工作"/>
         <Button
           className="operate_button"
           onClick={this.handleOperateClick}
@@ -209,14 +220,24 @@ class MainPager extends React.Component<Object, MainPagerState> {
         </Button>
         <div className="totalTime">今天已工作{this.getTotalTime()}小时</div>
         <EditableTable handleDelete={this.handleDelete}
-                       handleUpdate={this.handleUpdate}
-                       handleEditTime={this.handleEditTime}
-                       dataSource={this.state.works}
-                       count={this.state.works.length}
-                       date={this.state.date}
+                      handleUpdate={this.handleUpdate}
+                      handleEditTime={this.handleEditTime}
+                      dataSource={this.state.works}
+                      count={this.state.works.length}
+                      date={this.state.date}
         />
-      </div>
-    );
+      <Drawer
+        className="drawer"
+        title="柳比歇夫"
+        placement="left"
+        closable={false}
+        onClose={this.closeDrawer}
+        visible={this.state.drawerVisible}
+        style={{ position: 'absolute' }}
+      >
+        <p>Some contents...</p>
+      </Drawer>
+    </div>);
   }
 }
 

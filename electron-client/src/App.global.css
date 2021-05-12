@@ -13,6 +13,11 @@ body {
   overflow-y: hidden;
 }
 
+.drawer {
+  text-align: center;
+  background: transparent;
+}
+
 .ant-picker {
   margin: 10px 20px;
 }
