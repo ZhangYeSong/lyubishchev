@@ -3,7 +3,23 @@ import FileSync from 'lowdb/adapters/FileSync';
 import  moment, { Moment } from 'moment';
 import { Work } from './Work';
 
-const adapter = new FileSync('db.json'); // 申明一个适配器
+
+var path= require("path");
+function getAppDataPath() {
+  if(process.env.NODE_ENV == "development") {
+    return path.join("./")
+  }
+  switch (process.platform) {
+    case "darwin": {
+      return path.join(process.env.HOME, "Library", "Application Support", "柳比歇夫");
+    }
+    default: {
+      return path.join("./")
+    }
+  }
+} 
+
+const adapter = new FileSync(path.join(getAppDataPath(), 'db.json')); // 申明一个适配器
 const db = low(adapter);
 
 db.defaults({works: [], deletes: [], startWorkTime: -1})
