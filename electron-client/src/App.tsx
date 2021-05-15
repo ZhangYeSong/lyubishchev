@@ -11,6 +11,7 @@ import { MyDatePicker } from './MyDatePicker';
 import { MenuOutlined } from '@ant-design/icons';
 import zhCN from 'antd/lib/locale/zh_CN';
 import axios from 'axios';
+import { About } from './About'
 
 moment.locale('zh-cn');
 let currentDay = moment();
@@ -28,7 +29,8 @@ interface MainPagerState {
   startTime: number,
   date: Moment,
   spendTime: number,
-  drawerVisible: boolean
+  drawerVisible: boolean,
+  selectTab: number
 }
 
 class MainPager extends React.Component<Object, MainPagerState> {
@@ -43,7 +45,8 @@ class MainPager extends React.Component<Object, MainPagerState> {
       startTime: startWorkTime,
       date: moment(),
       spendTime: working?moment().valueOf() - startWorkTime:0,
-      drawerVisible: false
+      drawerVisible: false,
+      selectTab: 1
     };
     setInterval(() => {
       this.setState({spendTime:moment().valueOf() - this.state.startTime});
@@ -61,6 +64,11 @@ class MainPager extends React.Component<Object, MainPagerState> {
 
   private closeDrawer = () => {
     this.setState({drawerVisible: false});
+  }
+
+  private handleTabChange = (e) => {
+    this.setState({selectTab: e.key});
+    this.closeDrawer();
   }
 
   private getButtonText = () => {
@@ -197,9 +205,21 @@ class MainPager extends React.Component<Object, MainPagerState> {
     return moment.duration(totalTime).as('hours').toFixed(1);
   }
 
-  render() {
-    return (
-      <div className="Hello">
+  private renderContent(index: number) {
+    if(index == 1) {
+      return this.renderHome();
+    } else {
+      return this.renderAbout();
+    }
+  }
+
+  private renderAbout() {
+    return(<About />);
+  }
+
+  private renderHome() {
+    return(
+      <div className="Home">
         <div className="head_div">
           <MenuOutlined style={{color: 'black', fontSize: "20px", paddingRight: "44px"}} onClick={this.openDrawer}/>
           <h2>柳比歇夫计时器</h2>
@@ -226,37 +246,43 @@ class MainPager extends React.Component<Object, MainPagerState> {
                       count={this.state.works.length}
                       date={this.state.date}
         />
-      <Drawer
-        className="drawer"
-        title="柳比歇夫"
-        placement="left"
-        closable={false}
-        onClose={this.closeDrawer}
-        visible={this.state.drawerVisible}
-        style={{ position: 'absolute' }}
-      >
-        <Menu
-        style={{ width: 256 }}
-        defaultSelectedKeys={['1']}
-        defaultOpenKeys={['sub1']}>
-          <Menu.Item key="1">
-            主   页
-          </Menu.Item>
-          <Menu.Item key="2">
-            柳比歇夫
-          </Menu.Item>
-          <Menu.Item key="3">
-            统   计
-          </Menu.Item>
-          <Menu.Item key="4">
-            复   盘
-          </Menu.Item>
-          <Menu.Item key="5">
-            关   于
-          </Menu.Item>
-        </Menu>
-      </Drawer>
-    </div>);
+      </div>);
+  }
+
+  render() {
+    return (
+      <div>
+        {this.renderContent(this.state.selectTab)}
+        <Drawer
+          className="drawer"
+          title="柳比歇夫"
+          placement="left"
+          closable={false}
+          onClose={this.closeDrawer}
+          visible={this.state.drawerVisible}
+          style={{ position: 'absolute' }}
+        >
+          <Menu
+            defaultSelectedKeys={['1']}
+            defaultOpenKeys={['sub1']}>
+              <Menu.Item key="1" onClick={this.handleTabChange}>
+                主   页
+              </Menu.Item>
+              <Menu.Item key="2" onClick={this.handleTabChange}>
+                柳比歇夫
+              </Menu.Item>
+              <Menu.Item key="3" onClick={this.handleTabChange}>
+                统   计
+              </Menu.Item>
+              <Menu.Item key="4" onClick={this.handleTabChange}>
+                复   盘
+              </Menu.Item>
+              <Menu.Item key="5" onClick={this.handleTabChange}>
+                关   于
+              </Menu.Item>
+          </Menu>
+        </Drawer>
+      </div>);
   }
 }
 
