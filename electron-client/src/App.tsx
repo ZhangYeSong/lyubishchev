@@ -2,7 +2,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import './App.global.css';
-import { ConfigProvider,Drawer, Input, Button, message } from 'antd';
+import { Menu, ConfigProvider,Drawer, Input, Button, message } from 'antd';
 import { Work } from './Work';
 import { LowDBHelper } from './LowDBHelper';
 import  moment, { Moment } from 'moment';
@@ -201,7 +201,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
     return (
       <div className="Hello">
         <div className="head_div">
-          <MenuOutlined style={{color: 'black', fontSize: "20px"}} onClick={this.openDrawer}/>
+          <MenuOutlined style={{color: 'black', fontSize: "20px", paddingRight: "44px"}} onClick={this.openDrawer}/>
           <h2>柳比歇夫计时器</h2>
           <Button type="primary" onClick={this.handleSyncClick}>同步</Button>
         </div>
@@ -235,7 +235,26 @@ class MainPager extends React.Component<Object, MainPagerState> {
         visible={this.state.drawerVisible}
         style={{ position: 'absolute' }}
       >
-        <p>Some contents...</p>
+        <Menu
+        style={{ width: 256 }}
+        defaultSelectedKeys={['1']}
+        defaultOpenKeys={['sub1']}>
+          <Menu.Item key="1">
+            主   页
+          </Menu.Item>
+          <Menu.Item key="2">
+            柳比歇夫
+          </Menu.Item>
+          <Menu.Item key="3">
+            统   计
+          </Menu.Item>
+          <Menu.Item key="4">
+            复   盘
+          </Menu.Item>
+          <Menu.Item key="5">
+            关   于
+          </Menu.Item>
+        </Menu>
       </Drawer>
     </div>);
   }
