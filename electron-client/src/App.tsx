@@ -38,8 +38,12 @@ class MainPager extends React.Component<Object, MainPagerState> {
     super(props);
     let startWorkTime = LowDBHelper.getStartWorkTime();
     let working = moment(startWorkTime).isSame(moment(), 'days');
+    let curTitle = LowDBHelper.getCurrentContent();
+    if(curTitle == null) {
+      curTitle = "工作";
+    }
     this.state = {
-      workTitle: LowDBHelper.getCurrentContent(),
+      workTitle: curTitle,
       working: working,
       works: LowDBHelper.getUserWorks(0, moment()),
       startTime: startWorkTime,
