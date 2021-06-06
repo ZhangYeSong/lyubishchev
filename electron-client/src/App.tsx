@@ -112,7 +112,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
 
   private handleSyncClick = () => {
     const outerThis = this;
-    axios.post("/work/sync", 
+    axios.post("/work/sync",
       {userId: 0, works: LowDBHelper.getUserAllWorks(0), deletes: LowDBHelper.getUserDeletes()})
       .then(function (response) {
         console.log(response);
@@ -124,7 +124,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
         console.log(error);
         message.info('同步失败！');
       });
-      
+
   }
 
   private handleOperateClick = () => {
@@ -163,7 +163,7 @@ class MainPager extends React.Component<Object, MainPagerState> {
       LowDBHelper.setStartWorkTime(-1);
       LowDBHelper.setCurrentContent("");
     } else {
-      this.setState({startTime: moment().valueOf()});
+      this.setState({startTime: moment().valueOf(), spendTime: 0});
       LowDBHelper.setCurrentContent(this.state.workTitle);
       LowDBHelper.setStartWorkTime(moment().valueOf());
     }

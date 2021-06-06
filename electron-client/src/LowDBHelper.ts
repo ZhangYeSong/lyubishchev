@@ -17,7 +17,7 @@ function getAppDataPath() {
       return path.join("./")
     }
   }
-} 
+}
 
 const adapter = new FileSync(path.join(getAppDataPath(), 'db.json')); // 申明一个适配器
 const db = low(adapter);
@@ -45,7 +45,7 @@ export class LowDBHelper {
   static getUserWorks(userid: number, date: Moment): Work[] {
     return db.get("works").filter(function(work:Work) {
       return work.userId == userid && moment(work.endTime).isSame(date, 'days');
-    }).value();
+    }).sortBy("startTime").value();
   }
 
   static getUserAllWorks(userid: number): Work[] {
@@ -76,7 +76,7 @@ export class LowDBHelper {
 
     db.get('deletes').push(work.insertTime).write();;
   }
-  
+
   static updateWork(work: Work): void {
     db.get('works')
       .remove({insertTime: work.insertTime})
